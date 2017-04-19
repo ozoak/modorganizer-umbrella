@@ -145,7 +145,8 @@ def visual_studio_environment():
 def init_config(args):
     for d in config['paths'].keys():
         if isinstance(config['paths'][d], str):
-            config['paths'][d] = config['paths'][d].format(base_dir=os.path.abspath(args.destination))
+            config['paths'][d] = config['paths'][d].format(base_dir=os.path.abspath(args.destination),build_dir=args.builddir,progress_dir=args.progressdir)
+
 
     if args.set:
         for setting in args.set:
@@ -182,6 +183,8 @@ def main():
     parser.add_argument('-d', '--destination', default='.', help='output directory (base for download and build)')
     parser.add_argument('-s', '--set', action='append', help='set configuration parameters')
     parser.add_argument('-g', '--graph', action='store_true', help='update dependency graph')
+    parser.add_argument('-b', '--builddir', default='build', help='update dependency graph')
+    parser.add_argument('-p', '--progressdir', default='progress', help='update dependency graph')
     parser.add_argument('target', nargs='*', help='make target')
     args = parser.parse_args()
 
@@ -193,7 +196,7 @@ def main():
 
     logging.debug("building dependency graph")
     manager = TaskManager()
-    imp.load_source("build", args.file)
+    imp.load_source(args.builddir, args.file)
     build_graph = manager.create_graph({})
     assert isinstance(build_graph, nx.DiGraph)
 

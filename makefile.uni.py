@@ -22,7 +22,7 @@ from unibuild.utility import lazy, FormatDict
 from config import config
 from functools import partial
 from string import Formatter
-import os
+import os, sys
 
 
 """
@@ -38,7 +38,7 @@ Projects
 
 
 from unibuild.projects import sevenzip, qt5, boost, zlib, python, sip, pyqt5, ncc
-from unibuild.projects import asmjit, udis86, googletest, spdlog, fmtlib, lz4
+from unibuild.projects import asmjit, udis86, googletest, spdlog, fmtlib, lz4, WixToolkit
 
 # TODO modorganizer-lootcli needs an overhaul as the api has changed alot
 def bitness():
@@ -93,22 +93,13 @@ usvfs.depend(cmake.CMake().arguments(cmake_parameters +
                              .depend("boost")
                      )
 
-usvfs_32 = Project("usvfs_32")
+
 if config['architecture'] == 'x86_64':
-    usvfs.depend(cmake.CMake().arguments(cmake_parameters +
-                                         ["-DPROJ_ARCH={}".format("x86" if config['architecture'] == 'x86' else "x64")])
-                 .install()
-                 # TODO Not sure why this is required, will look into it at a later stage once we get the rest to build
-                 .depend(github.Source(config['Main_Author'], "usvfs", "master")
-                         .set_destination("usvfs"))
-                 .depend("AsmJit")
-                 .depend("Udis86")
-                 .depend("GTest")
-                 .depend("fmtlib")
-                 .depend("spdlog")
-                 .depend("boost")
-                 )
+    usvfs_32 = Project("usvfs_32")
+    usvfs_32.depend(build.Run_With_Output(r'"{0}" unimake.py -d "{1}" --set architecture="x86" -b "build_32" -p "progress_32" usvfs'.format(sys.executable,config['paths']['base_dir']),
+                                          name="Building usvfs 32bit Dll",working_directory=os.path.join(os.getcwd())))
 else:
+    usvfs_32 = Project("usvfs_32")
     usvfs_32.depend(dummy.Success("usvfs_32"))
 
 for author, git_path, path, branch, dependencies, Build in [
@@ -156,12 +147,11 @@ for author, git_path, path, branch, dependencies, Build in [
     (config['Main_Author'],               "modorganizer-plugin_python",     "plugin_python",     "master",          ["Qt5", "boost", "Python", "modorganizer-uibase",
                                                                                                                     "sip"],True),
     (config['Main_Author'],               "githubpp",                        "githubpp",          "master",          ["Qt5"],True),
-    (config['Main_Author'],               "modorganizer",                   "modorganizer",      "QT5.7",           ["Qt5", "boost",
+    (config['Main_Author'],               "modorganizer",                   "modorganizer",      "QT5.7",           ["Qt5", "boost", "usvfs_32",
                                                                                                                     "modorganizer-uibase", "modorganizer-archive",
                                                                                                                     "modorganizer-bsatk", "modorganizer-esptk",
                                                                                                                     "modorganizer-game_features",
                                                                                                                     "usvfs","githubpp", "NCC"], True),
-    (config['Main_Author'],                 "modorganizer-WixInstaller",    "WixInstaller",      "master",          ["WixToolkit","modorganizer"], False),
 ]:
     build_step = cmake.CMake().arguments(cmake_parameters).install()
 

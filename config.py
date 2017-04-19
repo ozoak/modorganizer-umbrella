@@ -75,7 +75,7 @@ config = {
     'tools': {
         'make': "nmake",
     },
-    'architecture': 'x86_64',
+    'architecture': 'x86_64',               # Don't change this as we spawn the usvfs x86 build later on.
     'vc_version':   '14.0',
     'build_type': "RelWithDebInfo",
     'offline': False,                       # if set, non-mandatory network requests won't be made.
@@ -102,12 +102,15 @@ config = {
 	'python_version_minor': '.13',			# used in python.py
 	'icu_version': '58',					# used in PyQt5
 	'icu_version_minor': '2',				# for consistency
+    'WixToolSet_Version_Build': '3.10.3.3007',                    # Wix Build Version
+    'WixToolSet_Version_Binary': '310',               # Wix Binary Version
 }
 
 config['paths'] = {
+    'base_dir':      "{base_dir}",
     'download':      "{base_dir}\\downloads",
-    'build':         "{base_dir}\\build",
-    'progress':      "{base_dir}\\progress",
+    'build':         "{base_dir}\\{build_dir}",
+    'progress':      "{base_dir}\\{progress_dir}",
 #    'graphviz':      path_or_default("dot.exe",   "Graphviz2.38", "bin"),
     'cmake':         path_or_default("cmake.exe", "CMake", "bin"),
     'git':           path_or_default("git.exe",   "Git", "bin"),
