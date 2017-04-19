@@ -17,7 +17,7 @@
 
 
 from unibuild import Project
-from unibuild.modules import github, cmake, Patch, git, hg, msbuild, build
+from unibuild.modules import github, cmake, Patch, git, hg, msbuild, build, dummy
 from unibuild.utility import lazy, FormatDict
 from config import config
 from functools import partial
@@ -93,8 +93,23 @@ usvfs.depend(cmake.CMake().arguments(cmake_parameters +
                              .depend("boost")
                      )
 
-
-
+usvfs_32 = Project("usvfs_32")
+if config['architecture'] == 'x86_64':
+    usvfs.depend(cmake.CMake().arguments(cmake_parameters +
+                                         ["-DPROJ_ARCH={}".format("x86" if config['architecture'] == 'x86' else "x64")])
+                 .install()
+                 # TODO Not sure why this is required, will look into it at a later stage once we get the rest to build
+                 .depend(github.Source(config['Main_Author'], "usvfs", "master")
+                         .set_destination("usvfs"))
+                 .depend("AsmJit")
+                 .depend("Udis86")
+                 .depend("GTest")
+                 .depend("fmtlib")
+                 .depend("spdlog")
+                 .depend("boost")
+                 )
+else:
+    usvfs_32.depend(dummy.Success("usvfs_32"))
 
 for author, git_path, path, branch, dependencies, Build in [
     (config['Main_Author'],               "modorganizer-game_features",     "game_features",     "master",          [],False),
@@ -146,8 +161,11 @@ for author, git_path, path, branch, dependencies, Build in [
                                                                                                                     "modorganizer-bsatk", "modorganizer-esptk",
                                                                                                                     "modorganizer-game_features",
                                                                                                                     "usvfs","githubpp", "NCC"], True),
+    (config['Main_Author'],                 "modorganizer-WixInstaller",    "WixInstaller",      "master",          ["WixToolkit","modorganizer"], False),
 ]:
     build_step = cmake.CMake().arguments(cmake_parameters).install()
+
+    build_installer = cmake.CMake().arguments(cmake_parameters).install()
 
     for dep in dependencies:
         build_step.depend(dep)
@@ -155,7 +173,11 @@ for author, git_path, path, branch, dependencies, Build in [
     project = Project(git_path)
 
     if Build:
-        project.depend(build_step.depend(github.Source(author, git_path, branch, super_repository=tl_repo)
+        if not git_path == "modorganizer-WixInstaller":
+            project.depend(build_step.depend(github.Source(author, git_path, branch, super_repository=tl_repo)
+                                             .set_destination(path)))
+        else:
+            project.depend(build_installer.depend(github.Source(author, git_path, branch, super_repository=tl_repo)
                                              .set_destination(path)))
     else:
         project.depend(github.Source(author, git_path, branch, super_repository=tl_repo)
