@@ -34,7 +34,7 @@ config_template = ("using python\n"
 def patchboost(context):
     try:
         savedpath = os.getcwd()
-        os.chdir(os.path.join("{}/build/boost_{}".format(config["__build_base_path"], config["boost_version"].replace(".", "_"))))
+        os.chdir(os.path.join("{}/boost_{}".format(config["paths"]["build"], config["boost_version"].replace(".", "_"))))
         pset = patch.fromfile(os.path.join(config["paths"]["build"], "usvfs", "patches", "type_traits_vs15_fix.patch"))
         pset.apply()
         pset = patch.fromfile(os.path.join(config["paths"]["build"], "usvfs", "patches", "boost_vector_overflow.patch"))
