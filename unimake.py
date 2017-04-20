@@ -34,6 +34,8 @@ import os.path
 import argparse
 import re
 
+exitcode = 0
+
 def progress_callback(job, percentage):
     if not percentage and not job:
         sys.stdout.write("\n")
@@ -162,6 +164,7 @@ def init_config(args):
         raise ValueError("only architectures supported are x86 and x86_64")
 
     visual_studio(config["vc_version"]) # forced set after args are evaluated
+    config['__Default_environment'] = os.environ
     config['__environment'] = visual_studio_environment()
     config['__build_base_path'] = os.path.abspath(args.destination)
 
@@ -184,8 +187,8 @@ def main():
     parser.add_argument('-d', '--destination', default='.', help='output directory (base for download and build)')
     parser.add_argument('-s', '--set', action='append', help='set configuration parameters')
     parser.add_argument('-g', '--graph', action='store_true', help='update dependency graph')
-    parser.add_argument('-b', '--builddir', default='build', help='update dependency graph')
-    parser.add_argument('-p', '--progressdir', default='progress', help='update dependency graph')
+    parser.add_argument('-b', '--builddir', default='build', help='update build directory')
+    parser.add_argument('-p', '--progressdir', default='progress', help='update progress directory')
     parser.add_argument('target', nargs='*', help='make target')
     args = parser.parse_args()
 
@@ -237,6 +240,7 @@ def main():
                     else:
                         if task.fail_behaviour == Task.FailBehaviour.FAIL:
                             logging.critical("task %s failed", node)
+                            exitcode = 1
                             return 1
                         elif task.fail_behaviour == Task.FailBehaviour.SKIP_PROJECT:
                             recursive_remove(build_graph, node)
@@ -256,7 +260,9 @@ def main():
 
 if __name__ == "__main__":
     try:
-        main()
+      exitcode = main()
+      if not exitcode == 0:
+          sys.exit(exitcode)
     except Exception, e:
         traceback.print_exc(file=sys.stdout)
         sys.exit(1)

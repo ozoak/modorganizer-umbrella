@@ -68,8 +68,7 @@ cmake_parameters = [
     "-DCMAKE_BUILD_TYPE={}".format(config["build_type"]),
     "-DDEPENDENCIES_DIR={}/build".format(config["__build_base_path"]),
 #	boost git version 	"-DBOOST_ROOT={}/build/boostgit",
-    "-DBOOST_ROOT={}/build/boost_{}".format(config["__build_base_path"], config["boost_version"].replace(".", "_")),
-    "-DCMAKE_INSTALL_PREFIX:PATH={}/install".format(config["__build_base_path"])
+    "-DBOOST_ROOT={}/build/boost_{}".format(config["__build_base_path"], config["boost_version"].replace(".", "_"))
 ]
 
 
@@ -80,7 +79,8 @@ if config.get('optimize', False):
 usvfs = Project("usvfs")
 
 usvfs.depend(cmake.CMake().arguments(cmake_parameters +
-                                     ["-DPROJ_ARCH={}".format("x86" if config['architecture'] == 'x86' else "x64")])
+                                     [" -DPROJ_ARCH={}".format("x86" if config['architecture'] == 'x86' else "x64")] +
+                                     [" -DCMAKE_INSTALL_PREFIX:PATH={}/install".format(config["__build_base_path"])])
              .install()
             # TODO Not sure why this is required, will look into it at a later stage once we get the rest to build
                              .depend(github.Source(config['Main_Author'], "usvfs", "master")
@@ -97,7 +97,7 @@ usvfs.depend(cmake.CMake().arguments(cmake_parameters +
 if config['architecture'] == 'x86_64':
     usvfs_32 = Project("usvfs_32")
     usvfs_32.depend(build.Run_With_Output(r'"{0}" unimake.py -d "{1}" --set architecture="x86" -b "build_32" -p "progress_32" usvfs'.format(sys.executable,config['paths']['base_dir']),
-                                          name="Building usvfs 32bit Dll",working_directory=os.path.join(os.getcwd())))
+                                          name="Building usvfs 32bit Dll",environment=config['__Default_environment'],working_directory=os.path.join(os.getcwd())))
 else:
     usvfs_32 = Project("usvfs_32")
     usvfs_32.depend(dummy.Success("usvfs_32"))
@@ -153,9 +153,7 @@ for author, git_path, path, branch, dependencies, Build in [
                                                                                                                     "modorganizer-game_features",
                                                                                                                     "usvfs","githubpp", "NCC"], True),
 ]:
-    build_step = cmake.CMake().arguments(cmake_parameters).install()
-
-    build_installer = cmake.CMake().arguments(cmake_parameters).install()
+    build_step = cmake.CMake().arguments(cmake_parameters + ["-DCMAKE_INSTALL_PREFIX:PATH={}/install".format(config["__build_base_path"])]).install()
 
     for dep in dependencies:
         build_step.depend(dep)
@@ -192,4 +190,12 @@ Project("python_zip") \
             .depend("Python")
             )
 
+if config['Installer']:
+    build_installer = cmake.CMake().arguments(cmake_parameters +["-DCMAKE_INSTALL_PREFIX:PATH={}/installer".format(config["__build_base_path"])]).install()
+    wixinstaller = Project("WixInstaller")
+
+    wixinstaller.depend(build_installer.depend(github.Source(config['Main_Author'],"modorganizer-WixInstaller", "Master", super_repository=tl_repo)
+                              .set_destination("WixInstaller"))\
+                .depend("modorganizer").depend("usvfs").depend("usvfs_32")
+                )
 

@@ -303,8 +303,12 @@ class Run_With_Output(Builder):
                              shell=True)
             proc.communicate()
             if proc.returncode != 0:
+                if isinstance(proc.returncode , (str, unicode)):
                     logging.error("failed to run %s (returncode %s), see %s and %s",
                                   self.__command(), proc.returncode)
+                    return False
+                else:
+                    logging.error("failed to run {} (returncode {})".format(self.__command(), proc.returncode))
                     return False
 
             return True
