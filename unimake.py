@@ -26,6 +26,7 @@ from config import config, vs_editions, get_from_hklm
 from subprocess import Popen, PIPE
 import imp
 import sys
+import traceback
 import logging
 import networkx as nx
 import tempfile
@@ -254,4 +255,10 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except Exception, e:
+        traceback.print_exc(file=sys.stdout)
+        sys.exit(1)
+
+

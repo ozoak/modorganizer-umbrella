@@ -163,11 +163,7 @@ for author, git_path, path, branch, dependencies, Build in [
     project = Project(git_path)
 
     if Build:
-        if not git_path == "modorganizer-WixInstaller":
-            project.depend(build_step.depend(github.Source(author, git_path, branch, super_repository=tl_repo)
-                                             .set_destination(path)))
-        else:
-            project.depend(build_installer.depend(github.Source(author, git_path, branch, super_repository=tl_repo)
+        project.depend(build_step.depend(github.Source(author, git_path, branch, super_repository=tl_repo)
                                              .set_destination(path)))
     else:
         project.depend(github.Source(author, git_path, branch, super_repository=tl_repo)
@@ -195,4 +191,5 @@ Project("python_zip") \
     .depend(build.Execute(python_zip_collect)
             .depend("Python")
             )
+
 
