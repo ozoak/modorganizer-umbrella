@@ -66,9 +66,9 @@ def gen_userfile_content(project):
 
 cmake_parameters = [
     "-DCMAKE_BUILD_TYPE={}".format(config["build_type"]),
-    "-DDEPENDENCIES_DIR={}/build".format(config["__build_base_path"]),
+    "-DDEPENDENCIES_DIR={}".format(config["paths"]["build"]),
 #	boost git version 	"-DBOOST_ROOT={}/build/boostgit",
-    "-DBOOST_ROOT={}/build/boost_{}".format(config["__build_base_path"], config["boost_version"].replace(".", "_"))
+    "-DBOOST_ROOT={}/boost_{}".format(config["paths"]["build"], config["boost_version"].replace(".", "_")),
 ]
 
 
@@ -78,9 +78,8 @@ if config.get('optimize', False):
 
 usvfs = Project("usvfs")
 
-usvfs.depend(cmake.CMake().arguments(cmake_parameters +
-                                     [" -DPROJ_ARCH={}".format("x86" if config['architecture'] == 'x86' else "x64")] +
-                                     [" -DCMAKE_INSTALL_PREFIX:PATH={}/install".format(config["__build_base_path"])])
+usvfs.depend(cmake.CMake().arguments(cmake_parameters + ["-DCMAKE_INSTALL_PREFIX:PATH={}/install".format(config["__build_base_path"])] +
+                                     ["-DPROJ_ARCH={}".format("x86" if config['architecture'] == 'x86' else "x64")])
              .install()
             # TODO Not sure why this is required, will look into it at a later stage once we get the rest to build
                              .depend(github.Source(config['Main_Author'], "usvfs", "master")
@@ -153,7 +152,7 @@ for author, git_path, path, branch, dependencies, Build in [
                                                                                                                     "modorganizer-game_features",
                                                                                                                     "usvfs","githubpp", "NCC"], True),
 ]:
-    build_step = cmake.CMake().arguments(cmake_parameters + ["-DCMAKE_INSTALL_PREFIX:PATH={}/install".format(config["__build_base_path"])]).install()
+    build_step = cmake.CMake().arguments(cmake_parameters).install()
 
     for dep in dependencies:
         build_step.depend(dep)
