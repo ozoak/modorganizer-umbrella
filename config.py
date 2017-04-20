@@ -85,7 +85,7 @@ config = {
     'optimize': False,                      # activate link-time code generation and other optimization.
                                             # This massively increases build time but produces smaller
                                             # binaries and marginally faster code
-    'Installer': False,                     # Used to create installer at end of build, Forces everything to be built
+    'Installer': True,                     # Used to create installer at end of build, Forces everything to be built
     'repo_update_frequency': 60 * 60 * 24,  # in seconds
     'num_jobs': multiprocessing.cpu_count() + 1,
 
@@ -108,10 +108,10 @@ config = {
 }
 
 config['paths'] = {
-    'base_dir':      "{base_dir}",
     'download':      "{base_dir}\\downloads",
     'build':         "{base_dir}\\{build_dir}",
     'progress':      "{base_dir}\\{progress_dir}",
+    'install':      "{base_dir}\\{install_dir}",
 #    'graphviz':      path_or_default("dot.exe",   "Graphviz2.38", "bin"),
     'cmake':         path_or_default("cmake.exe", "CMake", "bin"),
     'git':           path_or_default("git.exe",   "Git", "bin"),

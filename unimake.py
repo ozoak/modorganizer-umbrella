@@ -148,7 +148,10 @@ def visual_studio_environment():
 def init_config(args):
     for d in config['paths'].keys():
         if isinstance(config['paths'][d], str):
-            config['paths'][d] = config['paths'][d].format(base_dir=os.path.abspath(args.destination),build_dir=args.builddir,progress_dir=args.progressdir)
+            config['paths'][d] = config['paths'][d].format(base_dir=os.path.abspath(args.destination),
+                                                           build_dir=args.builddir,
+                                                           progress_dir=args.progressdir,
+                                                           install_dir=args.installdir)
 
 
     if args.set:
@@ -189,6 +192,7 @@ def main():
     parser.add_argument('-g', '--graph', action='store_true', help='update dependency graph')
     parser.add_argument('-b', '--builddir', default='build', help='update build directory')
     parser.add_argument('-p', '--progressdir', default='progress', help='update progress directory')
+    parser.add_argument('-i', '--installdir', default='progress', help='update progress directory')
     parser.add_argument('target', nargs='*', help='make target')
     args = parser.parse_args()
 
