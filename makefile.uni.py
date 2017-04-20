@@ -96,7 +96,7 @@ usvfs.depend(cmake.CMake().arguments(cmake_parameters +
 
 if config['architecture'] == 'x86_64':
     usvfs_32 = Project("usvfs_32")
-    usvfs_32.depend(build.Run_With_Output(r'"{0}" unimake.py -d "{1}" --set architecture="x86" -b "build_32" -p "progress_32" -i "install_32" usvfs'.format(sys.executable,config['paths']['base_dir']),
+    usvfs_32.depend(build.Run_With_Output(r'"{0}" unimake.py -d "{1}" --set architecture="x86" -b "build_32" -p "progress_32" -i "install_32" usvfs'.format(sys.executable,config['__build_base_path']),
                                           name="Building usvfs 32bit Dll",environment=config['__Default_environment'],working_directory=os.path.join(os.getcwd())))
 else:
     usvfs_32 = Project("usvfs_32")
