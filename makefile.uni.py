@@ -196,7 +196,7 @@ if config['Installer']:
     #build_installer = cmake.CMake().arguments(cmake_parameters +["-DCMAKE_INSTALL_PREFIX:PATH={}/installer".format(config["__build_base_path"])]).install()
     wixinstaller = Project("WixInstaller")
 
-    wixinstaller.depend(github.Source(config['Main_Author'],"modorganizer-WixInstaller", "master", super_repository=tl_repo)
+    wixinstaller.depend(github.Source(config['Main_Author'],"modorganizer-WixInstaller", "VSDev", super_repository=tl_repo)
                               .set_destination("WixInstaller"))\
                 .depend("modorganizer").depend("usvfs").depend("usvfs_32")
 
