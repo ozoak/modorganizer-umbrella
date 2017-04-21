@@ -45,7 +45,7 @@ def bitness():
     return "x64" if config['architecture'] == "x86_64" else "Win32"
 	
 Project("LootApi") \
-    .depend(Patch.Copy("loot_api.dll".format(loot_version, commit_id), os.path.join(config['__build_base_path'], "install", "bin", "loot"))
+    .depend(Patch.Copy("loot_api.dll".format(loot_version, commit_id), os.path.join(config["paths"]["install"], "bin", "loot"))
             .depend(github.Release("loot", "loot", loot_version, "loot-api_{}-0-{}_dev_{}".format(loot_version, commit_id, bitness()),"7z",tree_depth=1)
                     .set_destination("lootapi"))
             )
@@ -154,7 +154,7 @@ for author, git_path, path, branch, dependencies, Build in [
                                                                                                                     "usvfs","githubpp", "NCC"], True),
 ]:
     build_step = cmake.CMake().arguments(cmake_parameters +
-                                         ["-DCMAKE_INSTALL_PREFIX:PATH={}/install".format(config["paths"]["install"])])\
+                                         ["-DCMAKE_INSTALL_PREFIX:PATH={}".format(config["paths"]["install"])])\
                                          .install()
 
     for dep in dependencies:
@@ -176,7 +176,7 @@ def python_zip_collect(context):
     import glob
     from zipfile import ZipFile
 
-    ip = os.path.join(config['__build_base_path'], "install", "bin")
+    ip = os.path.join(config["paths"]["install"], "bin")
     bp = python.python['build_path']
 
     with ZipFile(os.path.join(ip, "python27.zip"), "w") as pyzip:

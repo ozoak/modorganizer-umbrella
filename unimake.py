@@ -192,7 +192,7 @@ def main():
     parser.add_argument('-g', '--graph', action='store_true', help='update dependency graph')
     parser.add_argument('-b', '--builddir', default='build', help='update build directory')
     parser.add_argument('-p', '--progressdir', default='progress', help='update progress directory')
-    parser.add_argument('-i', '--installdir', default='progress', help='update progress directory')
+    parser.add_argument('-i', '--installdir', default='install', help='update progress directory')
     parser.add_argument('target', nargs='*', help='make target')
     args = parser.parse_args()
 

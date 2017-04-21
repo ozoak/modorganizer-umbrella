@@ -64,7 +64,7 @@ init_repos = github.Source("Nexus-Mods", "Nexus-Mod-Manager", "master") \
 ncc = Project("NCC") \
     .depend(build.Run(r"publish.bat"
                      .format("-debug" if config['build_type'] == "Debug" else "-release",
-                              os.path.join(config['__build_base_path'], "install", "bin")),
+                              os.path.join(config["paths"]["install"], "bin")),
                       working_directory=lazy.Evaluate(lambda: os.path.join(ncc['build_path'], "..", "NexusClientCli")))
            .depend(msbuild.MSBuild(os.path.join(config['paths']['build'],"NCC","nmm",'NexusClientCli.sln'),
                        working_directory=lazy.Evaluate(lambda: os.path.join(ncc['build_path'], "..", "nmm")),project_platform="Any CPU")

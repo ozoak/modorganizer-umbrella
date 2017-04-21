@@ -133,17 +133,17 @@ else:
 
 
     def copy_imageformats(context):
-        make_sure_path_exists(os.path.join(config['__build_base_path'], "install", "bin", "dlls", "imageformats"))
+        make_sure_path_exists(os.path.join(config['paths']['install'], "bin", "dlls", "imageformats"))
         for f in glob(os.path.join(config["paths"]["build"], "qt5.git", "qtbase", "plugins", "imageformats", "*.dll")):
-            shutil.copy(f, os.path.join(config['__build_base_path'], "install", "bin", "dlls", "imageformats"))
+            shutil.copy(f, os.path.join(config['paths']['install'], "bin", "dlls", "imageformats"))
         return True
 
 
     def copy_platform(context):
-        make_sure_path_exists(os.path.join(config['__build_base_path'], "install", "bin", "platforms"))
+        make_sure_path_exists(os.path.join(config['paths']['install'], "bin", "platforms"))
         for f in glob(
                 os.path.join(config["paths"]["build"], "qt5.git", "qtbase", "plugins", "platforms", "qwindows.dll")):
-            shutil.copy(f, os.path.join(config['__build_base_path'], "install", "bin", "platforms"))
+            shutil.copy(f, os.path.join(config['paths']['install'], "bin", "platforms"))
         return True
 
 
