@@ -28,6 +28,6 @@ zlib_version = config['zlib_version']
 Project("zlib") \
     .depend(cmake.CMake().arguments(["-DCMAKE_BUILD_TYPE={0}".format(config["build_type"]),
                                      "-DCMAKE_INSTALL_PREFIX:PATH={}".format(
-                                         os.path.join(config["__build_base_path"], "build", "zlib"))
+                                         os.path.join(config["paths"]["build"], "zlib"))
                                      ]).install()
             .depend(urldownload.URLDownload("http://zlib.net/zlib-{}.tar.gz".format(zlib_version), 1)))

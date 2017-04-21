@@ -100,15 +100,17 @@ else:
 
     def qt5_environment():
         result = config['__environment'].copy()
-        result['Path'] = result['Path'] + ";" + ";".join([
+        result['Path'] = ";".join([
             os.path.join(config['paths']['build'], "icu", "dist", "bin"),
             os.path.join(config['paths']['build'], "icu", "dist", "lib"),
-            os.path.join(config['paths']['build'], "jom")])
-        result['INCLUDE'] += os.path.join(config['paths']['build'], "icu", "dist", "include") + ";" + \
-                             os.path.join(config['paths']['build'], "Win{}OpenSSL-{}".format(bitness(), openssl_version.replace(".", "_")), "include")
-        result['LIB'] += os.path.join(config['paths']['build'], "icu", "dist", "lib") + ";" + \
-                         os.path.join(config['paths']['build'], "Win{}OpenSSL-{}".format(bitness(), openssl_version.replace(".", "_")), "lib", "VC")
-        result['LIBPATH'] += os.path.join(config['paths']['build'], "icu", "dist", "lib")
+            os.path.join(config['paths']['build'], "jom")]) + ";" + result['Path']
+        result['INCLUDE'] = os.path.join(config['paths']['build'], "icu", "dist", "include") + ";" + \
+                             os.path.join(config['paths']['build'], "Win{}OpenSSL-{}".format(bitness(), openssl_version.replace(".", "_")), "include") + ";" + \
+                             result['INCLUDE']
+        result['LIB'] = os.path.join(config['paths']['build'], "icu", "dist", "lib") + ";" + \
+                         os.path.join(config['paths']['build'], "Win{}OpenSSL-{}".format(bitness(), openssl_version.replace(".", "_")), "lib", "VC") + ";" + \
+                         result['LIB']
+        result['LIBPATH'] = os.path.join(config['paths']['build'], "icu", "dist", "lib") + ";" + result['LIBPATH']
         return result
 
     init_repo = build.Run("perl init-repository", name="init qt repository") \
@@ -157,12 +159,8 @@ else:
                                                 .depend(build.Run(configure_cmd,
                                                                   name="configure qt",
                                                                   environment=qt5_environment())
-                                                        .depend(Patch
-                                                                .Replace("qtbase/configure.bat",
-                                                                         "if not exist %QTSRC%.gitignore goto sconf",
-                                                                         "")
                                                                 .depend(init_repo)
-                                                                )
+
                                                         .depend("icu")
                                                         .depend("openssl")
                                                         )
@@ -171,4 +169,5 @@ else:
                                 )
                         )
                 )
+
 
