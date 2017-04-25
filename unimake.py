@@ -113,6 +113,19 @@ def get_visual_studio_2015_or_less(vc_version):
         res = None
 
 
+    try:
+        s = os.environ["ProgramFiles(x86)"]
+        p = os.path.join(s, "Microsoft Visual Studio", "Shared", vc_version, "VC")
+        f = os.path.join(p, "vcvarsall.bat")
+
+        if os.path.isfile(f):
+            config['paths']['visual_studio_basedir'] = os.path.join(s, "Microsoft Visual Studio {}".format(vc_version))
+            return os.path.realpath(p)
+    except:
+        res = None
+
+
+
 def visual_studio(vc_version):
     config["paths"]["visual_studio"] = get_visual_studio_2015_or_less(vc_version) if vc_version < "15.0" else get_visual_studio_2017_or_more(vc_version)
 
@@ -198,7 +211,7 @@ def main():
 
     init_config(args)
 
-    for d in ["download", "build", "progress"]:
+    for d in ["download", "build", "progress","install"]:
         if not os.path.exists(config["paths"][d]):
             os.makedirs(config["paths"][d])
 

@@ -97,7 +97,7 @@ config = {
 	'openssl_version': '1.0.2k',			# changes often, so better to edit here
 	'zlib_version': '1.2.11',				# changes often, so better to edit here
 	'grep_version': '2.5.4',				# moved here as commented in qt5.py
-	'boost_version': '1.63.0',				# for -DBOOST_ROOT, also, it is either to change from here
+	'boost_version': '1.64.0',				# for -DBOOST_ROOT, also, it is either to change from here
 	'vc_version_for_boost': '14.0',			# boost 1.63 does not support VS 2017 yet
 	'python_version': '2.7',				# used below and in python.py
 	'python_version_minor': '.13',			# used in python.py
