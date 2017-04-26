@@ -68,12 +68,12 @@ ncc = Project("NCC") \
                       working_directory=lazy.Evaluate(lambda: os.path.join(ncc['build_path'], "..", "NexusClientCli")))
            .depend(msbuild.MSBuild(os.path.join(config['paths']['build'],"NCC","nmm",'NexusClientCli.sln'),
                        working_directory=lazy.Evaluate(lambda: os.path.join(ncc['build_path'], "..", "nmm")),project_platform="Any CPU")
-            .depend(build.Execute(prepare_nmm, name="append NexusClientCli project to NMM"))
+            .depend(build.Execute(prepare_nmm, name="append NexusClientCli project to NMM")
 
-                .depend(init_repos)).depend(github.Source(config['Main_Author'], "modorganizer-NCC", "master") \
+                .depend(init_repos).depend(github.Source(config['Main_Author'], "modorganizer-NCC", "master") \
                                     .set_destination(os.path.join("NCC", "NexusClientCli"))
-                                    )
+                                    ))))
 
-               )
+
 
 
