@@ -119,7 +119,7 @@ def get_visual_studio_2015_or_less(vc_version):
         f = os.path.join(p, "vcvarsall.bat")
 
         if os.path.isfile(f):
-            config['paths']['visual_studio_basedir'] = os.path.join(s, "Microsoft Visual Studio {}".format(vc_version))
+            config['paths']['visual_studio_basedir'] = os.path.join(s, "Microsoft Visual Studio", "Shared", vc_version)
             return os.path.realpath(p)
     except:
         res = None

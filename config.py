@@ -77,6 +77,7 @@ config = {
     },
     'architecture': 'x86_64',               # Don't change this as we spawn the usvfs x86 build later on.
     'vc_version':   '14.0',
+    'vc_platform':  'v140',
     'build_type': "RelWithDebInfo",
     'offline': False,                       # if set, non-mandatory network requests won't be made.
                                             # This is stuff like updating source repositories. The initial

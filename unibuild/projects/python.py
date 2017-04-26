@@ -45,8 +45,7 @@ def python_environment():
 
 def upgrade_args():
     env = config['__environment']
-    devenv_path = env['DevEnvDir'] if 'DevEnvDir' in env\
-        else os.path.join(config['paths']['visual_studio_basedir'], "Common7", "IDE")
+    devenv_path = os.path.join(config['paths']['visual_studio_basedir'], "Common7", "IDE")
     #MSVC2017 supports building with the MSVC2015 toolset though this will break here, Small work around to make sure devenv.exe exists
     #If not try MSVC2017 instead
     res = os.path.isfile(os.path.join(devenv_path, "devenv.exe"))
@@ -97,7 +96,7 @@ else:
     python = Project("Python") \
          .depend(build.Execute(install)
                  #.depend(msbuild.MSBuild("PCBuild/PCBuild.sln", "python")
-                 .depend(build.Run(r"PCBuild\\build.bat -e -c Release -m -p {}".format("x64" if config['architecture'] == 'x86_64' else ""),
+                 .depend(build.Run(r'PCBuild\\build.bat -e -c Release -m -p {} "/p:PlatformToolset={}"'.format("x64" if config['architecture'] == 'x86_64' else "x86",config['vc_platform']),
                                    environment=python_environment(),
                                    working_directory=lambda: os.path.join(python['build_path']))
                             .depend(build.Run(upgrade_args, name="upgrade python project")
