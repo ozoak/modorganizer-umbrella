@@ -27,6 +27,7 @@ import errno
 
 
 python_version = config.get('python_version', "2.7") + config.get('python_version_minor', ".12")
+python_toolset = config.get('vc_platformtoolset', "v140")
 python_url = "https://www.python.org/ftp/python"
 
 def make_sure_path_exists(path):
@@ -95,10 +96,11 @@ else:
 
     python = Project("Python") \
          .depend(build.Execute(install)
-                 #.depend(msbuild.MSBuild("PCBuild/PCBuild.sln", "python")
-                 .depend(build.Run(r'PCBuild\\build.bat -e -c Release -m -p {} "/p:PlatformToolset={}"'.format("x64" if config['architecture'] == 'x86_64' else "x86",config['vc_platform']),
-                                   environment=python_environment(),
-                                   working_directory=lambda: os.path.join(python['build_path']))
+                 .depend(msbuild.MSBuild("PCBuild/PCBuild.sln", "python",
+                                         project_PlatformToolset=python_toolset)
+#                 .depend(build.Run(r'PCBuild\\build.bat -e -c Release -m -p {} "/p:PlatformToolset={}"'.format("x64" if config['architecture'] == 'x86_64' else "x86",config['vc_platform']),
+#                                   environment=python_environment(),
+#                                   working_directory=lambda: os.path.join(python['build_path']))
                             .depend(build.Run(upgrade_args, name="upgrade python project")
                                          .depend(github.Source("LePresidente", "cpython", config.get('python_version', "2.7"))\
 										     .set_destination("python-{}".format(python_version))))

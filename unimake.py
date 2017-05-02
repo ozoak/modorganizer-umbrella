@@ -102,6 +102,7 @@ def get_visual_studio_2017_or_more(vc_version):
 
 
 def get_visual_studio_2015_or_less(vc_version):
+    res = ""
     try:
         s = os.environ["ProgramFiles(x86)"]
         p = os.path.join(s, "Microsoft Visual Studio {}".format(vc_version), "VC")
@@ -109,25 +110,32 @@ def get_visual_studio_2015_or_less(vc_version):
         if os.path.isfile(f):
             config['paths']['visual_studio_basedir'] = os.path.join(s, "Microsoft Visual Studio {}".format(vc_version))
             return os.path.realpath(p)
+        else:
+            res = None
     except:
         res = None
 
+    if res == None:
+        try:
+            s = os.environ["ProgramFiles(x86)"]
+            p = os.path.join(s, "Microsoft Visual Studio", "Shared", vc_version, "VC")
+            f = os.path.join(p, "vcvarsall.bat")
 
-    try:
-        s = os.environ["ProgramFiles(x86)"]
-        p = os.path.join(s, "Microsoft Visual Studio", "Shared", vc_version, "VC")
-        f = os.path.join(p, "vcvarsall.bat")
-
-        if os.path.isfile(f):
-            config['paths']['visual_studio_basedir'] = os.path.join(s, "Microsoft Visual Studio", "Shared", vc_version)
-            return os.path.realpath(p)
-    except:
-        res = None
+            if os.path.isfile(f):
+                config['paths']['visual_studio_basedir'] = os.path.join(s, "Microsoft Visual Studio", "Shared", vc_version)
+                return os.path.realpath(p)
+            else:
+                res = None
+        except:
+            res = None
 
 
 
 def visual_studio(vc_version):
     config["paths"]["visual_studio"] = get_visual_studio_2015_or_less(vc_version) if vc_version < "15.0" else get_visual_studio_2017_or_more(vc_version)
+    if not config["paths"]["visual_studio"]:
+        logging.error("Unable to find vcvarsall.bat, please make sure you have 'Common C++ tools' Installed")
+        return False
 
 
 def visual_studio_environment():
@@ -138,16 +146,17 @@ def visual_studio_environment():
     stdout, stderr = proc.communicate()
 
     if "Error in script usage. The correct usage is" in stderr:
-        logging.error("failed to set up environment (returncode %s): %s", proc.returncode, stderr)
-        return False
+            logging.error("failed to set up environment (returncode %s): %s", proc.returncode, stderr)
+            return False
 
     if "Error in script usage. The correct usage is" in stdout:
-        logging.error("failed to set up environment (returncode %s): %s", proc.returncode, stderr)
-        return False
+            logging.error("failed to set up environment (returncode %s): %s", proc.returncode, stderr)
+            return False
 
     if proc.returncode != 0:
-        logging.error("failed to set up environment (returncode %s): %s", proc.returncode, stderr)
-        return False
+            logging.error("failed to set up environment (returncode %s): %s", proc.returncode, stderr)
+            return False
+
 
     vcenv = CIDict()
 
