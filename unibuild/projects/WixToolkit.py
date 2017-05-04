@@ -27,4 +27,6 @@ WixToolSet_Version_Build = config['WixToolSet_Version_Build']
 
 
 Project("WixToolkit") \
-            .depend(urldownload.URLDownload("http://static.wixtoolset.org/releases/v{0}/wix{1}-binaries.zip".format(WixToolSet_Version_Build,WixToolSet_Version_Binary)).set_destination("WixToolkit"))
+            .depend(urldownload.URLDownload("http://static.wixtoolset.org/releases/v{0}/wix{1}-binaries.zip"
+                                            .format(WixToolSet_Version_Build,WixToolSet_Version_Binary))
+                    .set_destination("WixToolkit"))
