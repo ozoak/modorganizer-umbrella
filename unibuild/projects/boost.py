@@ -43,6 +43,13 @@ def patchboost(context):
         return False
 
 Project("boost") \
+    .depend(Patch.Copy(os.path.join("{}/boost_{}/stage/lib/boost_python-vc{}-mt-{}.dll"
+                                    .format(config["paths"]["build"],
+                                            config["boost_version"].replace(".", "_"),
+                                            vc_version.replace(".",""),
+                                            "_".join(boost_version.split(".")[:-1])
+                                            )),
+                       os.path.join(config["paths"]["install"], "bin"))
     .depend(b2.B2(name="Shared").arguments(["address-model={}".format("64" if config['architecture'] == 'x86_64' else "32"),
                                             "-a",
                                             "--user-config={}".format(os.path.join(config['paths']['build'],
@@ -84,5 +91,6 @@ Project("boost") \
                                                 tree_depth=1))
                     ).depend("icu").depend("Python")
                 )
+            )
             )
             )
