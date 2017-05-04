@@ -96,7 +96,7 @@ else:
 
     python = Project("Python") \
          .depend(build.Execute(install)
-                 .depend(msbuild.MSBuild("PCBuild/PCBuild.sln", "python",
+                 .depend(msbuild.MSBuild("PCBuild/PCBuild.sln", "python,pyexpat",
                                          project_PlatformToolset=python_toolset)
 #                 .depend(build.Run(r'PCBuild\\build.bat -e -c Release -m -p {} "/p:PlatformToolset={}"'.format("x64" if config['architecture'] == 'x86_64' else "x86",config['vc_platform']),
 #                                   environment=python_environment(),
