@@ -84,7 +84,7 @@ if False:
                 )
 else:
     def install(context):
-        make_sure_path_exists(os.path.join(config["__build_base_path"], "install", "libs"))
+        make_sure_path_exists(os.path.join(config["paths"]["install"], "libs"))
         path_segments = [context['build_path'], "PCbuild"]
         if config['architecture'] == "x86_64":
             path_segments.append("amd64")
