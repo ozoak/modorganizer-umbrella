@@ -141,21 +141,24 @@ def visual_studio(vc_version):
 def visual_studio_environment():
     # when using visual studio we need to set up the environment correctly
     arch = "amd64" if config["architecture"] == 'x86_64' else "x86"
-    proc = Popen([os.path.join(config['paths']['visual_studio'], "vcvarsall.bat"), arch, "&&", "SET"],
+    if config['paths']['visual_studio']:
+        proc = Popen([os.path.join(config['paths']['visual_studio'], "vcvarsall.bat"), arch, "&&", "SET"],
                      stdout=PIPE, stderr=PIPE)
-    stdout, stderr = proc.communicate()
+        stdout, stderr = proc.communicate()
 
-    if "Error in script usage. The correct usage is" in stderr:
+        if "Error in script usage. The correct usage is" in stderr:
             logging.error("failed to set up environment (returncode %s): %s", proc.returncode, stderr)
             return False
 
-    if "Error in script usage. The correct usage is" in stdout:
+        if "Error in script usage. The correct usage is" in stdout:
             logging.error("failed to set up environment (returncode %s): %s", proc.returncode, stderr)
             return False
 
-    if proc.returncode != 0:
+        if proc.returncode != 0:
             logging.error("failed to set up environment (returncode %s): %s", proc.returncode, stderr)
             return False
+    else:
+            sys.exit(1)
 
 
     vcenv = CIDict()
